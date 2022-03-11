@@ -1,15 +1,21 @@
 package com.amore.cash.service.impl;
 
 import com.amore.cash.amoredb.domain.Category;
+import com.amore.cash.amoredb.domain.Product;
 import com.amore.cash.amoredb.repository.CategoryRepository;
 import com.amore.cash.amoredb.repository.ProductRepository;
 import com.amore.cash.service.CashService;
 import com.amore.cash.utils.CashMap;
 import org.springframework.stereotype.Service;
 
+import javax.transaction.Transactional;
+import java.util.ArrayList;
+import java.util.Iterator;
+import java.util.List;
+
 /**
  * case 4. Cache Optimization
- * (조회) cash 조회시 값이 없으면 db 에서 값을 가져온 후 cash 에 해당 값을 채워넣는다.
+ *
  */
 @Service
 public class CashServiceImpl implements CashService {
@@ -25,10 +31,30 @@ public class CashServiceImpl implements CashService {
         this.productRepository = productRepository;
     }
 
+
     /**
-     * @author : SKMG
+     * @date : 2022-03-11 오후 8:31
+     * @description : 전체 조회는 cash 에서 조회하면 값의 오차가 있을수 있기 때문에 DB 에서 직접 가져온다.
+     */
+    @Override
+    public List<Category> findAllCategories(){
+        return this.categoryRepository.findAll();
+    }
+
+    /**
+     * @date : 2022-03-11 오후 8:31
+     * @description : 전체 조회는 cash 에서 조회하면 값의 오차가 있을수 있기 때문에 DB 에서 직접 가져온다.
+     */
+    @Override
+    public List<Product> findAllProducts(){
+        return this.productRepository.findAll();
+    }
+
+
+    /**
      * @date : 2022-03-11 오후 5:47
      * @description : Cash 에서 Category 를 조회한다.
+     * (조회) cash 조회시 값이 없으면 db 에서 값을 가져온 후 cash 에 해당 값을 채워넣는다.
     */
     @Override
     public Category findByCashCategory(Long categoryNo) {
@@ -49,5 +75,97 @@ public class CashServiceImpl implements CashService {
         }
 
         return category;
+    }
+
+    /**
+     * @date : 2022-03-11 오후 8:47
+     * @description : Cash 에서 Category 를 조회한다.
+     * (조회) cash 조회시 값이 없으면 db 에서 값을 가져온 후 cash 에 해당 값을 채워넣는다.
+     */
+    @Override
+    public Product findByCashProduct(Long productNo) {
+
+        Product product = new Product();
+
+        //cash hit
+        if(CashMap.PRODUCT_MAP.containsKey(productNo)) {
+            product = CashMap.PRODUCT_MAP.get(productNo);
+
+        } else { //cash miss
+
+            Product dbProduct = this.productRepository.findById(productNo).get(); //db 에서 값 조회
+
+            if(dbProduct != null) {
+                CashMap.PRODUCT_MAP.put(productNo, dbProduct);
+            }
+        }
+
+        return product;
+    }
+
+    @Override
+    public List<Product> findByCashProductByCategory(Long categoryNo) {
+
+        List<Product> products = new ArrayList<>();
+
+        Iterator<Long> keys = CashMap.PRODUCT_MAP.keySet().iterator();
+        while(keys.hasNext() ){
+            Long key = keys.next();
+
+            if(Long.valueOf(CashMap.PRODUCT_MAP.get(key).getCategoryNo()) == categoryNo) {
+                products.add(CashMap.PRODUCT_MAP.get(key));
+            }
+        }
+        return products;
+    }
+
+    @Override
+    @Transactional
+    public Category updateCategoryName(Long categoryNo, String categoryName) {
+
+        Category category = this.categoryRepository.findById(categoryNo).get();
+
+        if(category != null) { // 값이 있을때만 save 한다.
+            Category cashCategory = CashMap.CATEGORY_MAP.get(Long.valueOf(categoryNo));
+
+            category.setCategoryName(categoryName);
+            cashCategory.setCategoryName(categoryName);
+
+            //jpa save
+            this.categoryRepository.save(category);
+
+            //cash update
+            CashMap.CATEGORY_MAP.put(categoryNo, cashCategory);
+        }
+        return category;
+    }
+
+    @Override
+    public Product updateProduct(Long productNo, Product productParam) {
+
+        Product product = this.productRepository.findById(productNo).get();
+
+
+        if(product != null) { // 값이 있을대만 save 한다.
+            Product cashProduct = CashMap.PRODUCT_MAP.get(productNo);
+
+            if(productParam.getProductName() != null) { //상품명
+                product.setProductName(productParam.getProductName());
+                cashProduct.setProductName(productParam.getProductName());
+            }
+
+            if(productParam.getProduct_price() != null) {
+                product.setProduct_price(productParam.getProduct_price());
+                cashProduct.setProduct_price(productParam.getProduct_price());
+            }
+
+            //jpa save
+            this.productRepository.save(product);
+
+            //cash update
+            CashMap.PRODUCT_MAP.put(productParam.getProductNo(), cashProduct);
+        }
+
+        return product;
     }
 }
