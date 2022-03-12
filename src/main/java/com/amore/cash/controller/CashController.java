@@ -17,6 +17,8 @@ import java.util.List;
 @RequestMapping("/cash")
 public class CashController {
 
+    //todo : swagger
+
     private final CashServiceImpl cashService;
 
     public CashController(CashServiceImpl cashService) {
