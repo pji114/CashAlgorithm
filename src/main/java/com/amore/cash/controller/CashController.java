@@ -33,16 +33,6 @@ public class CashController {
     }
 
     /**
-     * @date : 2022-03-11 오후 8:34
-     * @description : 제품 전체 조회
-     */
-    @Operation(summary = "제품 전체조회", description = "제품 전체조회")
-    @GetMapping("products")
-    public List<Product> getProducts() {
-        return this.cashService.findAllProducts();
-    }
-
-    /**
      * @date : 2022-03-11 오후 6:10
      * @description : 카테고리 단건 조회
      */
@@ -53,18 +43,6 @@ public class CashController {
             @RequestParam(value = "categoryNo") int categoryNo) {
 
         return this.cashService.findByCashCategory(Long.valueOf(categoryNo));
-    }
-
-    /**
-     * @date : 2022-03-11 오후 6:10
-     * @description : 제품 단건 조회
-     */
-    @Operation(summary = "제품 단건조회", description = "제품 단건조회")
-    @GetMapping("product")
-    public Product getProduct(
-            @ApiParam(value = "제품번호", required = true)
-            @RequestParam(value = "productNo") int productNo) {
-        return this.cashService.findByCashProduct(Long.valueOf(productNo));
     }
 
     /**
@@ -93,6 +71,28 @@ public class CashController {
 
             @RequestBody CategoryRequest categoryRequest) {
         return this.cashService.updateCategoryName(Long.valueOf(categoryNo), categoryRequest.getCategoryName());
+    }
+
+    /**
+     * @date : 2022-03-11 오후 8:34
+     * @description : 제품 전체 조회
+     */
+    @Operation(summary = "제품 전체조회", description = "제품 전체조회")
+    @GetMapping("products")
+    public List<Product> getProducts() {
+        return this.cashService.findAllProducts();
+    }
+
+    /**
+     * @date : 2022-03-11 오후 6:10
+     * @description : 제품 단건 조회
+     */
+    @Operation(summary = "제품 단건조회", description = "제품 단건조회")
+    @GetMapping("product")
+    public Product getProduct(
+            @ApiParam(value = "제품번호", required = true)
+            @RequestParam(value = "productNo") int productNo) {
+        return this.cashService.findByCashProduct(Long.valueOf(productNo));
     }
 
     /**
