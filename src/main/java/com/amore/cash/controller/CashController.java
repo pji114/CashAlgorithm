@@ -10,6 +10,7 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @Slf4j
 @RestController
@@ -28,7 +29,7 @@ public class CashController {
      */
     @Operation(summary = "전체 카테고리 조회", description = "전체 카테고리 조회")
     @GetMapping("categories")
-    public List<Category> getCategories() {
+    public Map<Long, Category> getCategories() {
         return this.cashService.findAllCategories();
     }
 
@@ -79,7 +80,7 @@ public class CashController {
      */
     @Operation(summary = "제품 전체조회", description = "제품 전체조회")
     @GetMapping("products")
-    public List<Product> getProducts() {
+    public Map<Long, Product> getProducts() {
         return this.cashService.findAllProducts();
     }
 

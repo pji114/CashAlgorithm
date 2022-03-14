@@ -9,9 +9,7 @@ import com.amore.cash.utils.CashMap;
 import org.springframework.stereotype.Service;
 
 import javax.transaction.Transactional;
-import java.util.ArrayList;
-import java.util.Iterator;
-import java.util.List;
+import java.util.*;
 
 /**
  * case 4. Cache Optimization
@@ -36,8 +34,8 @@ public class CashServiceImpl implements CashService {
      * @description : 전체 조회는 cash 에서 조회하면 값의 오차가 있을수 있기 때문에 DB 에서 직접 가져온다.
      */
     @Override
-    public List<Category> findAllCategories() {
-        return this.categoryRepository.findAll();
+    public Map<Long, Category> findAllCategories() {
+        return CashMap.CATEGORY_MAP;
     }
 
     /**
@@ -45,8 +43,8 @@ public class CashServiceImpl implements CashService {
      * @description : 전체 조회는 cash 에서 조회하면 값의 오차가 있을수 있기 때문에 DB 에서 직접 가져온다.
      */
     @Override
-    public List<Product> findAllProducts() {
-        return this.productRepository.findAll();
+    public Map<Long, Product> findAllProducts() {
+        return CashMap.PRODUCT_MAP;
     }
 
 

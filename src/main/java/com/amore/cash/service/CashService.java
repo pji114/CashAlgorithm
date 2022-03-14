@@ -4,6 +4,7 @@ import com.amore.cash.amoredb.domain.Category;
 import com.amore.cash.amoredb.domain.Product;
 
 import java.util.List;
+import java.util.Map;
 
 public interface CashService {
 
@@ -11,13 +12,13 @@ public interface CashService {
      * @date : 2022-03-14 오후 2:51
      * @description : 카테고리 전체 조회
     */
-    List<Category> findAllCategories();
+    Map<Long, Category> findAllCategories();
 
     /**
      * @date : 2022-03-14 오후 2:51
      * @description : 제품 전체조회
     */
-    List<Product> findAllProducts();
+    Map<Long, Product> findAllProducts();
 
     /**
      * @date : 2022-03-14 오후 2:52
