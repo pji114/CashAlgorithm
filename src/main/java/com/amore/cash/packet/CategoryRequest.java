@@ -1,17 +1,21 @@
 package com.amore.cash.packet;
 
-import lombok.Builder;
-import lombok.Getter;
-import lombok.Setter;
+import io.swagger.annotations.ApiModel;
+import io.swagger.annotations.ApiModelProperty;
+import io.swagger.annotations.ApiParam;
+import lombok.*;
 
-@Builder
 @Getter
 @Setter
+@RequiredArgsConstructor
 public class CategoryRequest {
 
-    Long categoryNo;
+    @ApiModelProperty(value = "카테고리 번호", required = true)
+    Integer categoryNo;
 
+    @ApiModelProperty(value = "카테고리 이름", required = false)
     String categoryName;
 
-    Integer parent_no;
+    @ApiModelProperty(value = "상위 카테고리 번호", required = false)
+    Integer parentNo;
 }
